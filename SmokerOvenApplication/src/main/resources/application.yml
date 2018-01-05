@@ -1,0 +1,18 @@
+tf:
+  connection:
+    host: 127.0.0.1
+    port: 4332
+    timeout: 30000
+  sensor:
+    temperature:
+      tolerance: 2.0
+      room: uuid
+      object: uuid
+  io:
+    plug:
+      smoker:
+        id: uuid
+        relay: 1
+      oven:
+        id: uuid
+        relay: 2
