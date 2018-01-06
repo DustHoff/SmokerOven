@@ -1,8 +1,12 @@
 package de.onesi.hoffnet.config;
 
 import de.onesi.hoffnet.events.OvenEvent;
+import de.onesi.hoffnet.guard.HasTimeGuard;
+import de.onesi.hoffnet.guard.TimeExpiredGuard;
 import de.onesi.hoffnet.states.OvenState;
+import de.onesi.hoffnet.tinkerforge.TFConnection;
 import de.onesi.hoffnet.tinkerforge.io.OvenPlug;
+import de.onesi.hoffnet.tinkerforge.io.SmokerPlug;
 import de.onesi.hoffnet.tinkerforge.sensor.ObjectTemperatureSensor;
 import de.onesi.hoffnet.tinkerforge.sensor.RoomTemperatureSensor;
 import org.springframework.context.annotation.Bean;
@@ -21,34 +25,56 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<OvenState, OvenEvent> config) throws Exception {
-        config.withConfiguration().autoStartup(true).listener(getOvenPlug());
+        config.withConfiguration()
+                .listener(getOvenPlug());
     }
 
     @Override
     public void configure(StateMachineStateConfigurer<OvenState, OvenEvent> states) throws Exception {
         states.withStates()
-                .initial(OvenState.INITIALIZE)
+                .initial(OvenState.INITIALIZE, getConnection())
                 .state(OvenState.INITIALIZE)
                 .state(OvenState.READY)
+                .choice(OvenState.PREPAIRE)
+                .state(OvenState.PREPAIRE_WAIT)
+                .state(OvenState.PREPAIRE_NOTHING)
+                .fork(OvenState.START)
                 .state(OvenState.BUSY)
                 .end(OvenState.FINISHED)
                 .and().withStates().parent(OvenState.BUSY)
                 .initial(OvenState.HEATING)
                 .state(OvenState.HEATING)
-                .state(OvenState.COOLING);
+                .state(OvenState.COOLING)
+                .and().withStates().parent(OvenState.BUSY)
+                .initial(OvenState.SMOKE)
+                .state(OvenState.SMOKE)
+                .state(OvenState.AIR);
     }
 
     @Override
     public void configure(StateMachineTransitionConfigurer<OvenState, OvenEvent> transitions) throws Exception {
         transitions
-                .withExternal().source(OvenState.INITIALIZE).target(OvenState.READY).event(OvenEvent.INITIALIZED)
+                .withExternal().source(OvenState.INITIALIZE).target(OvenState.READY)
                 .and()
                 .withExternal().source(OvenState.INITIALIZE).target(OvenState.FAILED).event(OvenEvent.FAILED)
                 .and()
-                .withExternal().source(OvenState.READY).target(OvenState.BUSY).event(OvenEvent.CONFIGURED)
+                .withExternal().source(OvenState.READY).target(OvenState.PREPAIRE).event(OvenEvent.CONFIGURED)
+                .and().withChoice().source(OvenState.PREPAIRE)
+                .first(OvenState.PREPAIRE_WAIT, getHasTimeGuard())
+                .last(OvenState.PREPAIRE_NOTHING)
+                .and()
+                .withExternal().source(OvenState.PREPAIRE_NOTHING).target(OvenState.START)
+                .and()
+                .withExternal()
+                .source(OvenState.PREPAIRE_WAIT).target(OvenState.START).timer(60000).guard(getTimeExpiredGuard())
+                .and()
+                .withFork().source(OvenState.START)
+                .target(OvenState.SMOKE)
+                .target(OvenState.HEATING)
                 .and()
                 .withExternal().source(OvenState.BUSY).target(OvenState.FINISHED).event(OvenEvent.TEMPERATURE_REACHED)
                 .and()
+                // Oven activity
                 .withExternal().source(OvenState.COOLING)
                 .guard(getRoomTemperatrueSensor())
                 .target(OvenState.HEATING).event(OvenEvent.TEMPERATURE_CHANGED)
@@ -57,7 +83,14 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
                 .guard(getRoomTemperatrueSensor())
                 .target(OvenState.COOLING).event(OvenEvent.TEMPERATURE_CHANGED)
                 .and()
-                .withExternal().source(OvenState.BUSY).target(OvenState.READY).timer(1000);
+                // Smoker activity
+                .withExternal().source(OvenState.SMOKE).target(OvenState.AIR).timer(18000000)
+                .and()
+                .withExternal().source(OvenState.AIR).target(OvenState.FINISHED).timer(3600000)
+                .and()
+                .withExternal().source(OvenState.AIR).target(OvenState.SMOKE).event(OvenEvent.SMOKER_REFILLED)
+                .and()
+                .withExternal().source(OvenState.FINISHED).target(OvenState.READY);
     }
 
     @Bean(name = "roomTemperatureSensor")
@@ -71,7 +104,27 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
     }
 
     @Bean(name = "ovenPlug")
-    public OvenPlug getOvenPlug(){
+    public OvenPlug getOvenPlug() {
         return new OvenPlug();
+    }
+
+    @Bean(name = "hasTimeGuard")
+    public HasTimeGuard getHasTimeGuard() {
+        return new HasTimeGuard();
+    }
+
+    @Bean(name = "timeExpiredGuard")
+    public TimeExpiredGuard getTimeExpiredGuard() {
+        return new TimeExpiredGuard();
+    }
+
+    @Bean(name = "smokerPlug")
+    public SmokerPlug getSmokerPlug() {
+        return new SmokerPlug();
+    }
+
+    @Bean(name = "TFConnection")
+    public TFConnection getConnection() {
+        return new TFConnection();
     }
 }

@@ -1,7 +1,7 @@
 package de.onesi.hoffnet.tinkerforge.io;
 
-import de.onesi.hoffnet.events.SmokerEvent;
-import de.onesi.hoffnet.states.SmokerState;
+import de.onesi.hoffnet.events.OvenEvent;
+import de.onesi.hoffnet.states.OvenState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.statemachine.StateContext;
@@ -12,7 +12,7 @@ import org.springframework.statemachine.transition.Transition;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SmokerPlug extends Plug implements StateMachineListener<SmokerState, SmokerEvent> {
+public class SmokerPlug extends Plug implements StateMachineListener<OvenState, OvenEvent> {
     @Value("${tf.io.plug.smoker.id:uuid}")
     protected void setUuid(String uuid) {
         this.uuid = uuid;
@@ -24,12 +24,12 @@ public class SmokerPlug extends Plug implements StateMachineListener<SmokerState
     }
 
     @Override
-    public void stateChanged(State<SmokerState, SmokerEvent> state, State<SmokerState, SmokerEvent> state1) {
+    public void stateChanged(State<OvenState, OvenEvent> state, State<OvenState, OvenEvent> state1) {
 
     }
 
     @Override
-    public void stateEntered(State<SmokerState, SmokerEvent> state) {
+    public void stateEntered(State<OvenState, OvenEvent> state) {
         try {
             switch (state.getId()) {
                 case SMOKE:
@@ -47,42 +47,42 @@ public class SmokerPlug extends Plug implements StateMachineListener<SmokerState
     }
 
     @Override
-    public void stateExited(State<SmokerState, SmokerEvent> state) {
+    public void stateExited(State<OvenState, OvenEvent> state) {
 
     }
 
     @Override
-    public void eventNotAccepted(Message<SmokerEvent> message) {
+    public void eventNotAccepted(Message<OvenEvent> message) {
 
     }
 
     @Override
-    public void transition(Transition<SmokerState, SmokerEvent> transition) {
+    public void transition(Transition<OvenState, OvenEvent> transition) {
 
     }
 
     @Override
-    public void transitionStarted(Transition<SmokerState, SmokerEvent> transition) {
+    public void transitionStarted(Transition<OvenState, OvenEvent> transition) {
 
     }
 
     @Override
-    public void transitionEnded(Transition<SmokerState, SmokerEvent> transition) {
+    public void transitionEnded(Transition<OvenState, OvenEvent> transition) {
 
     }
 
     @Override
-    public void stateMachineStarted(StateMachine<SmokerState, SmokerEvent> stateMachine) {
+    public void stateMachineStarted(StateMachine<OvenState, OvenEvent> stateMachine) {
 
     }
 
     @Override
-    public void stateMachineStopped(StateMachine<SmokerState, SmokerEvent> stateMachine) {
+    public void stateMachineStopped(StateMachine<OvenState, OvenEvent> stateMachine) {
 
     }
 
     @Override
-    public void stateMachineError(StateMachine<SmokerState, SmokerEvent> stateMachine, Exception e) {
+    public void stateMachineError(StateMachine<OvenState, OvenEvent> stateMachine, Exception e) {
 
     }
 
@@ -92,7 +92,7 @@ public class SmokerPlug extends Plug implements StateMachineListener<SmokerState
     }
 
     @Override
-    public void stateContext(StateContext<SmokerState, SmokerEvent> stateContext) {
+    public void stateContext(StateContext<OvenState, OvenEvent> stateContext) {
 
     }
 }

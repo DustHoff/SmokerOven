@@ -40,6 +40,7 @@ public class OvenPlug extends Plug implements StateMachineListener<OvenState, Ov
                 case HEATING:
                     turnOn();
                     break;
+                case FINISHED:
                 case COOLING:
                     turnOff();
                     break;

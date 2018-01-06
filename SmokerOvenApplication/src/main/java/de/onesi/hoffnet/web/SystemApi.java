@@ -2,14 +2,11 @@ package de.onesi.hoffnet.web;
 
 import com.google.gson.Gson;
 import de.onesi.hoffnet.events.OvenEvent;
-import de.onesi.hoffnet.events.SmokerEvent;
 import de.onesi.hoffnet.states.OvenState;
-import de.onesi.hoffnet.states.SmokerState;
 import de.onesi.hoffnet.tinkerforge.TFConnection;
 import de.onesi.hoffnet.tinkerforge.sensor.ObjectTemperatureSensor;
 import de.onesi.hoffnet.tinkerforge.sensor.RoomTemperatureSensor;
 import de.onesi.hoffnet.web.data.Configuration;
-import de.onesi.hoffnet.web.data.State;
 import de.onesi.hoffnet.web.data.Temperature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.statemachine.StateMachine;
@@ -19,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class SystemApi {
+public class SystemApi implements ISystemAPI {
 
     private final Gson gson;
     @Autowired
@@ -30,8 +27,6 @@ public class SystemApi {
     private TFConnection connection;
     @Autowired
     private StateMachine<OvenState, OvenEvent> ovenStateMachine;
-    @Autowired
-    private StateMachine<SmokerState, SmokerEvent> smokerStateMachine;
     private Configuration configuration = new Configuration();
 
     public SystemApi() {
@@ -39,9 +34,8 @@ public class SystemApi {
     }
 
     @RequestMapping("/state")
-    public String ovenState() {
-        State state = new State(connection.getState(), ovenStateMachine.getState().getId(), smokerStateMachine.getState().getId());
-        return gson.toJson(state);
+    public String state() {
+        return gson.toJson(ovenStateMachine.getState().getId());
     }
 
     @RequestMapping(value = "/configuration", method = {RequestMethod.POST, RequestMethod.GET})
@@ -53,7 +47,6 @@ public class SystemApi {
             roomTemperatureSensor.setTolerance(configuration.getTemepratureTolerance());
             objectTemperatureSensor.setTolerance(configuration.getTemepratureTolerance());
             ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
-            if (configuration.useSmoker()) smokerStateMachine.sendEvent(SmokerEvent.CONFIGURED);
         }
         return gson.toJson(this.configuration);
     }

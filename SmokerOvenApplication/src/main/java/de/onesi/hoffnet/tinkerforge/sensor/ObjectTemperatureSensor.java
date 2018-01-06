@@ -1,9 +1,7 @@
 package de.onesi.hoffnet.tinkerforge.sensor;
 
 import de.onesi.hoffnet.events.OvenEvent;
-import de.onesi.hoffnet.states.OvenState;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.statemachine.StateContext;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,6 +17,7 @@ public class ObjectTemperatureSensor extends TemperatureSensor  {
         super.temperature(temperature);
         if(getTargetTemperature()==null)return;
         if((this.getTemperature()+tolerance)>=getTargetTemperature()){
+            log.info("Object Temperature reached");
             ovenStateMachine.sendEvent(OvenEvent.TEMPERATURE_REACHED);
         }
     }

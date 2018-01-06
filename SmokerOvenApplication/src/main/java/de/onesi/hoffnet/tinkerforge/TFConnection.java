@@ -12,11 +12,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TFConnection extends IPConnection implements IPConnection.ConnectedListener, ApplicationContextAware {
+public class TFConnection extends IPConnection implements IPConnection.ConnectedListener, ApplicationContextAware, Action<OvenState, OvenEvent> {
 
     private Logger log;
     @Value("${tf.connection.host:127.0.0.1}")
@@ -80,4 +82,12 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
         this.log = log;
     }
 
+    @Override
+    public void execute(StateContext<OvenState, OvenEvent> context) {
+        try {
+            connect();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 }

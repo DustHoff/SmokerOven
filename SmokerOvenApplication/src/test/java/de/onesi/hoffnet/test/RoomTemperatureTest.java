@@ -15,9 +15,8 @@ public class RoomTemperatureTest extends TFMock {
     @Override
     public void before() throws Exception {
         super.before();
-        connection.connected((short) 1);
-        smokerOven.getOvenStateMachine().sendEvent(OvenEvent.CONFIGURED);
-        Assert.assertEquals(OvenState.BUSY, smokerOven.getOvenStateMachine().getState().getId());
+        ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
+        Assert.assertEquals(OvenState.BUSY, ovenStateMachine.getState().getId());
         roomTemperatureSensor.setTargetTemperature(90);
     }
 

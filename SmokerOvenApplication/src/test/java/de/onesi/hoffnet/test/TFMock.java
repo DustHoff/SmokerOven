@@ -9,6 +9,7 @@ import de.onesi.hoffnet.tinkerforge.io.OvenPlug;
 import de.onesi.hoffnet.tinkerforge.io.SmokerPlug;
 import de.onesi.hoffnet.tinkerforge.sensor.ObjectTemperatureSensor;
 import de.onesi.hoffnet.tinkerforge.sensor.RoomTemperatureSensor;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -44,6 +45,9 @@ public class TFMock {
     @InjectMocks
     @Autowired
     protected SmokerOven smokerOven;
+    @InjectMocks
+    @Autowired
+    protected StateMachine<OvenState, OvenEvent> ovenStateMachine;
 
     @Before
     public void before() throws Exception {
@@ -51,14 +55,21 @@ public class TFMock {
         mockPlugs();
         mockTemperatureSensor();
         MockitoAnnotations.initMocks(this);
+        ovenStateMachine.start();
+        connection.connected((short) 1);
+    }
+
+    @After
+    public void after() {
+        ovenStateMachine.stop();
     }
 
     private void mockConnection() throws Exception {
-
         given(connection.getConnectionState()).willReturn(ConnectionState.CONNECTED.getId());
         doNothing().when(connection).connect();
         doCallRealMethod().when(connection).getState();
         doCallRealMethod().when(connection).connected(Matchers.anyShort());
+        doCallRealMethod().when(connection).execute(Matchers.any(StateContext.class));
         doCallRealMethod().when(connection).setApplicationContext(Matchers.any(ApplicationContext.class));
         doCallRealMethod().when(connection).setLog(Matchers.any(Logger.class));
         given(connection.getOvenStateMachine()).willReturn((StateMachine<OvenState, OvenEvent>) context.getBean("ovenStateMachine"));
@@ -91,8 +102,8 @@ public class TFMock {
         doNothing().when(objectTemperatureSensor).initialize();
         doCallRealMethod().when(roomTemperatureSensor).setOvenStateMachine(Matchers.any(StateMachine.class));
         doCallRealMethod().when(objectTemperatureSensor).setOvenStateMachine(Matchers.any(StateMachine.class));
-        roomTemperatureSensor.setOvenStateMachine(smokerOven.getOvenStateMachine());
-        objectTemperatureSensor.setOvenStateMachine(smokerOven.getOvenStateMachine());
+        roomTemperatureSensor.setOvenStateMachine((StateMachine<OvenState, OvenEvent>) context.getBean("ovenStateMachine"));
+        objectTemperatureSensor.setOvenStateMachine((StateMachine<OvenState, OvenEvent>) context.getBean("ovenStateMachine"));
         doCallRealMethod().when(roomTemperatureSensor).getTemperature();
         doCallRealMethod().when(roomTemperatureSensor).temperature(Matchers.anyInt());
         doCallRealMethod().when(objectTemperatureSensor).getTemperature();
