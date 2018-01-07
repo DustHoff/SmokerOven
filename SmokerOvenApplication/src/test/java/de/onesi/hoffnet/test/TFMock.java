@@ -90,11 +90,17 @@ public class TFMock {
         doCallRealMethod().when(ovenPlug).getState();
         doCallRealMethod().when(smokerPlug).getState();
         doCallRealMethod().when(ovenPlug).stateEntered(Matchers.any(State.class));
-        //doCallRealMethod().when(smokerOven).stateEntered(Matchers.any(State.class));
+        doCallRealMethod().when(smokerPlug).stateEntered(Matchers.any(State.class));
         doCallRealMethod().when(ovenPlug).setLogger(Matchers.any(Logger.class));
+        doCallRealMethod().when(smokerPlug).setLogger(Matchers.any(Logger.class));
         ovenPlug.setLogger(LoggerFactory.getLogger(OvenPlug.class));
+        smokerPlug.setLogger(LoggerFactory.getLogger(SmokerPlug.class));
         Assert.assertNotNull(ovenPlug);
         Assert.assertNotNull(smokerPlug);
+        ovenStateMachine.addStateListener(ovenPlug);
+        ovenStateMachine.addStateListener(smokerPlug);
+        ovenPlug.turnOff();
+        smokerPlug.turnOff();
     }
 
     private void mockTemperatureSensor() throws Exception {
