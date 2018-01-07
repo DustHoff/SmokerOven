@@ -55,6 +55,7 @@ public class TFMock {
         mockPlugs();
         mockTemperatureSensor();
         MockitoAnnotations.initMocks(this);
+        ovenStateMachine.getExtendedState().getVariables().clear();
         ovenStateMachine.start();
         connection.connected((short) 1);
     }
