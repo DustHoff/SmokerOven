@@ -1,11 +1,13 @@
 package de.onesi.hoffnet.web.data;
 
+import java.util.Date;
+
 public class Configuration {
 
     private Double temepratureTolerance;
     private Double roomTemperature;
     private Double objectTemperature;
-    private boolean smoker;
+    private Date startDate;
 
     public Double getTemepratureTolerance() {
         return temepratureTolerance;
@@ -31,11 +33,11 @@ public class Configuration {
         this.objectTemperature = objectTemperature;
     }
 
-    public boolean useSmoker() {
-        return smoker;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setSmoker(boolean smoker) {
-        this.smoker = smoker;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 }
