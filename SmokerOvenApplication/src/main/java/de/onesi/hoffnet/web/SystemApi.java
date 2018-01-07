@@ -38,15 +38,17 @@ public class SystemApi implements ISystemAPI {
         return gson.toJson(ovenStateMachine.getState().getId());
     }
 
-    @RequestMapping(value = "/configuration", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/configure", method = {RequestMethod.POST, RequestMethod.GET})
     public String configure(@RequestBody Configuration configuration) {
         if (configuration != null) {
-            this.configuration = configuration;
             roomTemperatureSensor.setTargetTemperature(configuration.getRoomTemperature());
             objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
             roomTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
             objectTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
             ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
+            configuration.setRoomTemperature(roomTemperatureSensor.getTargetTemperature());
+            configuration.setObjectTemperature(objectTemperatureSensor.getTargetTemperature());
+            this.configuration = configuration;
         }
         return gson.toJson(this.configuration);
     }
