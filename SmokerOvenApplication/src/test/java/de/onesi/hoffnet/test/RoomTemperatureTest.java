@@ -52,4 +52,10 @@ public class RoomTemperatureTest extends TFMock {
         Assert.assertEquals(77d,roomTemperatureSensor.getTemperature(),0d);
         Assert.assertTrue("Plug turned on", ovenPlug.getState());
     }
+
+    @Test
+    public void setMaxTemperature() {
+        roomTemperatureSensor.setTargetTemperature(300d);
+        Assert.assertEquals(150d, roomTemperatureSensor.getTargetTemperature(), 0d);
+    }
 }

@@ -5,6 +5,7 @@ tf:
     timeout: 30000
   sensor:
     temperature:
+      max: 150.0
       tolerance: 2.0
       room: uuid
       object: uuid

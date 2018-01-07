@@ -18,7 +18,6 @@ public class ObjectTemperatureTest extends TFMock {
         ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
         objectTemperatureSensor.setTolerance(2d);
         objectTemperatureSensor.setTargetTemperature(92d);
-        Assert.assertEquals(OvenState.BUSY, ovenStateMachine.getState().getId());
     }
 
     @Test
@@ -37,5 +36,11 @@ public class ObjectTemperatureTest extends TFMock {
         Assert.assertEquals(92d, objectTemperatureSensor.getTemperature(), 0);
         Assert.assertEquals(OvenState.READY, ovenStateMachine.getState().getId());
 
+    }
+
+    @Test
+    public void setMaxTemperature() {
+        objectTemperatureSensor.setTargetTemperature(300d);
+        Assert.assertEquals(150d, objectTemperatureSensor.getTargetTemperature(), 0d);
     }
 }

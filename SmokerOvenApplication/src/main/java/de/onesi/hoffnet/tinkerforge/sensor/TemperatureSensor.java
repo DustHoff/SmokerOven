@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.guard.Guard;
 
 
 public class TemperatureSensor implements IComponent, BrickletThermocouple.TemperatureListener  {
@@ -26,6 +24,8 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
     private Double targetTemperature;
     @Value("${tf.sensor.temperature.tolerance:2.0}")
     protected double tolerance;
+    @Value("${tf.sensor.temperature.max")
+    protected double maxTemperature;
 
     @Override
     public void initialize() throws Exception {
@@ -52,6 +52,10 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
     }
 
     public void setTargetTemperature(double targetTemperature) {
+        if (targetTemperature > maxTemperature) {
+            this.targetTemperature = maxTemperature;
+            return;
+        }
         this.targetTemperature = targetTemperature;
     }
 
@@ -69,5 +73,9 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
 
     public void setLog(Logger log) {
         this.log = log;
+    }
+
+    public void setMaxTemperature(double max) {
+        this.maxTemperature = max;
     }
 }

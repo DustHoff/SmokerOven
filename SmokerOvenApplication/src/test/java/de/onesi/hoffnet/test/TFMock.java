@@ -121,7 +121,12 @@ public class TFMock {
         doCallRealMethod().when(roomTemperatureSensor).evaluate((StateContext<OvenState, OvenEvent>) Matchers.any());
         doCallRealMethod().when(roomTemperatureSensor).setLog(Matchers.any(Logger.class));
         doCallRealMethod().when(objectTemperatureSensor).setLog(Matchers.any(Logger.class));
+        doCallRealMethod().when(roomTemperatureSensor).setMaxTemperature(Matchers.anyDouble());
+        doCallRealMethod().when(objectTemperatureSensor).setMaxTemperature(Matchers.anyDouble());
         roomTemperatureSensor.setLog(LoggerFactory.getLogger(RoomTemperatureSensor.class));
         objectTemperatureSensor.setLog(LoggerFactory.getLogger(ObjectTemperatureSensor.class));
+        roomTemperatureSensor.setMaxTemperature(150d);
+        objectTemperatureSensor.setMaxTemperature(150d);
+
     }
 }
