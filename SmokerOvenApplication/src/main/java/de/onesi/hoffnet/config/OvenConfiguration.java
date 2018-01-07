@@ -75,11 +75,11 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
                 .and()
                 // Oven activity
                 .withExternal().source(OvenState.COOLING)
-                .guard(getRoomTemperatrueSensor())
+                .guard(getRoomTemperatureSensor())
                 .target(OvenState.HEATING).event(OvenEvent.TEMPERATURE_CHANGED)
                 .and()
                 .withExternal().source(OvenState.HEATING)
-                .guard(getRoomTemperatrueSensor())
+                .guard(getRoomTemperatureSensor())
                 .target(OvenState.COOLING).event(OvenEvent.TEMPERATURE_CHANGED)
                 .and()
                 // Smoker activity
@@ -93,7 +93,7 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
     }
 
     @Bean(name = "roomTemperatureSensor")
-    public RoomTemperatureSensor getRoomTemperatrueSensor() {
+    public RoomTemperatureSensor getRoomTemperatureSensor() {
         return new RoomTemperatureSensor();
     }
 

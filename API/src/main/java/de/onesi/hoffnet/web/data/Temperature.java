@@ -3,11 +3,11 @@ package de.onesi.hoffnet.web.data;
 public class Temperature {
 
     private double objectTemperature;
-    private double roomTemeprature;
+    private double roomTemperature;
 
-    public Temperature(double objectTemperature, double roomTemeprature) {
+    public Temperature(double objectTemperature, double roomTemperature) {
         this.objectTemperature = objectTemperature;
-        this.roomTemeprature = roomTemeprature;
+        this.roomTemperature = roomTemperature;
     }
 
     public Temperature(){}
@@ -20,11 +20,11 @@ public class Temperature {
         this.objectTemperature = objectTemperature;
     }
 
-    public double getRoomTemeprature() {
-        return roomTemeprature;
+    public double getRoomTemperature() {
+        return roomTemperature;
     }
 
-    public void setRoomTemeprature(double roomTemeprature) {
-        this.roomTemeprature = roomTemeprature;
+    public void setRoomTemperature(double roomTemperature) {
+        this.roomTemperature = roomTemperature;
     }
 }

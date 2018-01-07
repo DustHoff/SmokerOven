@@ -44,8 +44,8 @@ public class SystemApi implements ISystemAPI {
             this.configuration = configuration;
             roomTemperatureSensor.setTargetTemperature(configuration.getRoomTemperature());
             objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
-            roomTemperatureSensor.setTolerance(configuration.getTemepratureTolerance());
-            objectTemperatureSensor.setTolerance(configuration.getTemepratureTolerance());
+            roomTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
+            objectTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
             ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
         }
         return gson.toJson(this.configuration);

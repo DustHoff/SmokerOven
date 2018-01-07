@@ -4,17 +4,17 @@ import java.util.Date;
 
 public class Configuration {
 
-    private Double temepratureTolerance;
+    private Double temperatureTolerance;
     private Double roomTemperature;
     private Double objectTemperature;
     private Date startDate;
 
-    public Double getTemepratureTolerance() {
-        return temepratureTolerance;
+    public Double getTemperatureTolerance() {
+        return temperatureTolerance;
     }
 
-    public void setTemepratureTolerance(Double temepratureTolerance) {
-        this.temepratureTolerance = temepratureTolerance;
+    public void setTemperatureTolerance(Double temepratureTolerance) {
+        this.temperatureTolerance = temepratureTolerance;
     }
 
     public Double getRoomTemperature() {
