@@ -15,7 +15,6 @@ import org.springframework.statemachine.StateMachine;
 public class TemperatureSensor implements IComponent, BrickletThermocouple.TemperatureListener  {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     protected String uuid;
-    @Autowired
     protected StateMachine<OvenState,OvenEvent> ovenStateMachine;
     @Autowired
     private TFConnection connection;
@@ -24,7 +23,7 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
     private Double targetTemperature;
     @Value("${tf.sensor.temperature.tolerance:2.0}")
     protected double tolerance;
-    @Value("${tf.sensor.temperature.max")
+    @Value("${tf.sensor.temperature.max}")
     protected double maxTemperature;
 
     @Override
