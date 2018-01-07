@@ -10,6 +10,6 @@ public class HasTimeGuard implements Guard<OvenState, OvenEvent> {
     @Override
     public boolean evaluate(StateContext<OvenState, OvenEvent> context) {
 
-        return context.getExtendedState().getVariables().containsKey("time");
+        return context.getExtendedState().getVariables().containsKey("start");
     }
 }

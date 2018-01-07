@@ -25,8 +25,7 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<OvenState, OvenEvent> config) throws Exception {
-        config.withConfiguration()
-                .listener(getOvenPlug());
+        config.withConfiguration().machineId("SmokerOven");
     }
 
     @Override
