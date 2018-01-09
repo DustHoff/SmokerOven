@@ -87,7 +87,8 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
         try {
             connect();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
+            getOvenStateMachine().sendEvent(OvenEvent.FAILED);
         }
     }
 }

@@ -31,7 +31,7 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
     @Override
     public void configure(StateMachineStateConfigurer<OvenState, OvenEvent> states) throws Exception {
         states.withStates()
-                .initial(OvenState.INITIALIZE, getConnection())
+                .initial(OvenState.INITIALIZE)
                 .state(OvenState.INITIALIZE)
                 .state(OvenState.READY)
                 .choice(OvenState.PREPAIRE)
@@ -53,9 +53,12 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
     @Override
     public void configure(StateMachineTransitionConfigurer<OvenState, OvenEvent> transitions) throws Exception {
         transitions
-                .withExternal().source(OvenState.INITIALIZE).target(OvenState.READY)
+                .withInternal().source(OvenState.INITIALIZE).action(getConnection()).and()
+                .withExternal().source(OvenState.INITIALIZE).target(OvenState.READY).event(OvenEvent.INITIALIZED)
                 .and()
                 .withExternal().source(OvenState.INITIALIZE).target(OvenState.FAILED).event(OvenEvent.FAILED)
+                .and()
+                .withExternal().source(OvenState.FAILED).target(OvenState.INITIALIZE)
                 .and()
                 .withExternal().source(OvenState.READY).target(OvenState.PREPAIRE).event(OvenEvent.CONFIGURED)
                 .and().withChoice().source(OvenState.PREPAIRE)

@@ -8,16 +8,16 @@ import de.onesi.hoffnet.tinkerforge.sensor.ObjectTemperatureSensor;
 import de.onesi.hoffnet.tinkerforge.sensor.RoomTemperatureSensor;
 import de.onesi.hoffnet.web.data.Configuration;
 import de.onesi.hoffnet.web.data.Temperature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.statemachine.StateMachine;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class SystemApi implements ISystemAPI {
+public class SystemApi {
 
+    private Logger log = LoggerFactory.getLogger(SystemApi.class);
     private final Gson gson;
     @Autowired
     private RoomTemperatureSensor roomTemperatureSensor;
@@ -33,14 +33,15 @@ public class SystemApi implements ISystemAPI {
         gson = new Gson();
     }
 
-    @RequestMapping("/state")
-    public String state() {
-        return gson.toJson(ovenStateMachine.getState().getId());
+    @RequestMapping(value = "/state")
+    public OvenState state() {
+        return ovenStateMachine.getState().getId();
     }
 
-    @RequestMapping(value = "/configure", method = {RequestMethod.POST, RequestMethod.GET})
-    public String configure(@RequestBody Configuration configuration) {
+    @PostMapping(value = "/configure")
+    public Configuration configure(@RequestBody Configuration configuration) {
         if (configuration != null) {
+            log.info("API configure call " + configuration);
             roomTemperatureSensor.setTargetTemperature(configuration.getRoomTemperature());
             objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
             roomTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
@@ -50,11 +51,21 @@ public class SystemApi implements ISystemAPI {
             configuration.setObjectTemperature(objectTemperatureSensor.getTargetTemperature());
             this.configuration = configuration;
         }
-        return gson.toJson(this.configuration);
+        return getConfiguration();
     }
 
-    @RequestMapping(value = "/temperature")
-    public String temperature() {
-        return gson.toJson(new Temperature(objectTemperatureSensor.getTemperature(), roomTemperatureSensor.getTargetTemperature()));
+    @GetMapping(value = "/configure")
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    @GetMapping(value = "/temperature")
+    public Temperature temperature() {
+        log.info("Temperature Object: " + objectTemperatureSensor.getTemperature());
+        log.info("Temperature Room: " + roomTemperatureSensor.getTemperature());
+        Temperature temperature = new Temperature();
+        temperature.setObjectTemperature(objectTemperatureSensor.getTemperature());
+        temperature.setRoomTemperature(roomTemperatureSensor.getTemperature());
+        return temperature;
     }
 }
