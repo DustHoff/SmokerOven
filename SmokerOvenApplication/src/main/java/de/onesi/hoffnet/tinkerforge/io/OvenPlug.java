@@ -36,7 +36,7 @@ public class OvenPlug extends Plug {
                     break;
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

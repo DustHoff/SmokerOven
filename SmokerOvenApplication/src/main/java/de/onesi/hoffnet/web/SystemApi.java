@@ -11,6 +11,7 @@ import de.onesi.hoffnet.web.data.Temperature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,24 +34,21 @@ public class SystemApi {
         gson = new Gson();
     }
 
-    @RequestMapping(value = "/state")
+    @RequestMapping(value = "/state", produces = MediaType.APPLICATION_JSON_VALUE)
     public OvenState state() {
         return ovenStateMachine.getState().getId();
     }
 
-    @PostMapping(value = "/configure")
+    @PostMapping(value = "/configure", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Configuration configure(@RequestBody Configuration configuration) {
-        if (configuration != null) {
-            log.info("API configure call " + configuration);
-            roomTemperatureSensor.setTargetTemperature(configuration.getRoomTemperature());
-            objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
-            roomTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
-            objectTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
-            ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
-            configuration.setRoomTemperature(roomTemperatureSensor.getTargetTemperature());
-            configuration.setObjectTemperature(objectTemperatureSensor.getTargetTemperature());
-            this.configuration = configuration;
-        }
+        roomTemperatureSensor.setTargetTemperature(configuration.getRoomTemperature());
+        objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
+        roomTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
+        objectTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
+        ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
+        configuration.setRoomTemperature(roomTemperatureSensor.getTargetTemperature());
+        configuration.setObjectTemperature(objectTemperatureSensor.getTargetTemperature());
+        this.configuration = configuration;
         return getConfiguration();
     }
 
@@ -59,10 +57,8 @@ public class SystemApi {
         return configuration;
     }
 
-    @GetMapping(value = "/temperature")
+    @GetMapping(value = "/temperature", produces = MediaType.APPLICATION_JSON_VALUE)
     public Temperature temperature() {
-        log.info("Temperature Object: " + objectTemperatureSensor.getTemperature());
-        log.info("Temperature Room: " + roomTemperatureSensor.getTemperature());
         Temperature temperature = new Temperature();
         temperature.setObjectTemperature(objectTemperatureSensor.getTemperature());
         temperature.setRoomTemperature(roomTemperatureSensor.getTemperature());

@@ -1,19 +1,15 @@
 tf:
-  connection:
-    host: 127.0.0.1
-    port: 4332
-    timeout: 30000
   sensor:
     temperature:
       max: 150.0
       tolerance: 2.0
-      room: uuid
-      object: uuid
+      room: B5G
+      object: B6L
   io:
     plug:
       smoker:
-        id: uuid
+        id: rzt
         relay: 1
       oven:
-        id: uuid
+        id: rzt
         relay: 2

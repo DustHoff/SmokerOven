@@ -92,10 +92,10 @@ public class TFMock {
         doCallRealMethod().when(smokerPlug).getState();
         doCallRealMethod().when(ovenPlug).stateEntered(Matchers.any(State.class));
         doCallRealMethod().when(smokerPlug).stateEntered(Matchers.any(State.class));
-        doCallRealMethod().when(ovenPlug).setLogger(Matchers.any(Logger.class));
-        doCallRealMethod().when(smokerPlug).setLogger(Matchers.any(Logger.class));
-        ovenPlug.setLogger(LoggerFactory.getLogger(OvenPlug.class));
-        smokerPlug.setLogger(LoggerFactory.getLogger(SmokerPlug.class));
+        doCallRealMethod().when(ovenPlug).setLog(Matchers.any(Logger.class));
+        doCallRealMethod().when(smokerPlug).setLog(Matchers.any(Logger.class));
+        ovenPlug.setLog(LoggerFactory.getLogger(OvenPlug.class));
+        smokerPlug.setLog(LoggerFactory.getLogger(SmokerPlug.class));
         Assert.assertNotNull(ovenPlug);
         Assert.assertNotNull(smokerPlug);
         ovenStateMachine.addStateListener(ovenPlug);
@@ -107,10 +107,6 @@ public class TFMock {
     private void mockTemperatureSensor() throws Exception {
         doNothing().when(roomTemperatureSensor).initialize();
         doNothing().when(objectTemperatureSensor).initialize();
-        doCallRealMethod().when(roomTemperatureSensor).setOvenStateMachine(Matchers.any(StateMachine.class));
-        doCallRealMethod().when(objectTemperatureSensor).setOvenStateMachine(Matchers.any(StateMachine.class));
-        roomTemperatureSensor.setOvenStateMachine((StateMachine<OvenState, OvenEvent>) context.getBean("ovenStateMachine"));
-        objectTemperatureSensor.setOvenStateMachine((StateMachine<OvenState, OvenEvent>) context.getBean("ovenStateMachine"));
         doCallRealMethod().when(roomTemperatureSensor).getTemperature();
         doCallRealMethod().when(roomTemperatureSensor).temperature(Matchers.anyInt());
         doCallRealMethod().when(objectTemperatureSensor).getTemperature();

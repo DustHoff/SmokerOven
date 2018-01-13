@@ -33,7 +33,7 @@ public class SmokerPlug extends Plug implements StateMachineListener<OvenState, 
 
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

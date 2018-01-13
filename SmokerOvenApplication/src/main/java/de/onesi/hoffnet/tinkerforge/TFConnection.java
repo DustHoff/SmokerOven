@@ -18,14 +18,14 @@ import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TFConnection extends IPConnection implements IPConnection.ConnectedListener, ApplicationContextAware, Action<OvenState, OvenEvent> {
+public class TFConnection extends IPConnection implements IPConnection.ConnectedListener, IPConnection.DisconnectedListener, ApplicationContextAware, Action<OvenState, OvenEvent> {
 
     private Logger log;
     @Value("${tf.connection.host:127.0.0.1}")
     private String host;
     @Value("${tf.connection.port:4223}")
     private int port;
-    @Value("${tf.connection.timeout:30000}")
+    @Value("${tf.connection.timeout:2500}")
     private int timeout;
     private ApplicationContext context;
 
@@ -34,6 +34,7 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
         this.setAutoReconnect(true);
         this.setTimeout(timeout);
         this.addConnectedListener(this);
+        this.addDisconnectedListener(this);
         log = LoggerFactory.getLogger(TFConnection.class);
     }
 
@@ -43,21 +44,13 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
     }
 
     @Override
-    public void connected(short state) {
-        ConnectionState connectionState = ConnectionState.getStateByID(state);
-        if (connectionState.equals(ConnectionState.CONNECTED)) {
-            for (IComponent component: context.getBeansOfType(IComponent.class).values()) {
-                try {
-                    log.info("Initialize "+component.getClass().getSimpleName());
-                    component.initialize();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    getOvenStateMachine().sendEvent(OvenEvent.FAILED);
-                }
-            }
-            getOvenStateMachine().sendEvent(OvenEvent.INITIALIZED);
-        }
-        log.info("Tinkerforge Connection changed to STATE " + connectionState.name());
+    public void connected(short reason) {
+        log.info("Tinkerforge Connection changed to STATE " + getState().name());
+    }
+
+    @Override
+    public void disconnected(short disconnectReason) {
+        log.info("Tinkerforge Connection changed to STATE " + getState().name());
     }
 
     public ConnectionState getState() {
@@ -69,13 +62,13 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
         return super.getConnectionState();
     }
 
-    public StateMachine<OvenState, OvenEvent> getOvenStateMachine(){
+    public StateMachine<OvenState, OvenEvent> getOvenStateMachine() {
         return (StateMachine<OvenState, OvenEvent>) context.getBean("ovenStateMachine");
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context=applicationContext;
+        this.context = applicationContext;
     }
 
     public void setLog(Logger log) {
@@ -86,9 +79,27 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
     public void execute(StateContext<OvenState, OvenEvent> context) {
         try {
             connect();
+            waitForConnection();
+            for (IComponent component : this.context.getBeansOfType(IComponent.class).values()) {
+                log.info("Initialize " + component.getClass().getSimpleName());
+                //Thread.sleep(timeout);
+                component.initialize();
+            }
+            getOvenStateMachine().sendEvent(OvenEvent.INITIALIZED);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             getOvenStateMachine().sendEvent(OvenEvent.FAILED);
+        }
+    }
+
+    @Override
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void waitForConnection() throws InterruptedException {
+        while (!getState().equals(ConnectionState.CONNECTED)) {
+            Thread.sleep(500);
         }
     }
 }

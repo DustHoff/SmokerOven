@@ -32,8 +32,9 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
     public void configure(StateMachineStateConfigurer<OvenState, OvenEvent> states) throws Exception {
         states.withStates()
                 .initial(OvenState.INITIALIZE)
-                .state(OvenState.INITIALIZE)
+                .state(OvenState.INITIALIZE, getConnection())
                 .state(OvenState.READY)
+                .state(OvenState.FAILED)
                 .choice(OvenState.PREPAIRE)
                 .state(OvenState.PREPAIRE_WAIT)
                 .state(OvenState.PREPAIRE_NOTHING)
@@ -53,12 +54,11 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
     @Override
     public void configure(StateMachineTransitionConfigurer<OvenState, OvenEvent> transitions) throws Exception {
         transitions
-                .withInternal().source(OvenState.INITIALIZE).action(getConnection()).and()
                 .withExternal().source(OvenState.INITIALIZE).target(OvenState.READY).event(OvenEvent.INITIALIZED)
                 .and()
                 .withExternal().source(OvenState.INITIALIZE).target(OvenState.FAILED).event(OvenEvent.FAILED)
                 .and()
-                .withExternal().source(OvenState.FAILED).target(OvenState.INITIALIZE)
+                .withExternal().source(OvenState.FAILED).target(OvenState.INITIALIZE).timerOnce(30000)
                 .and()
                 .withExternal().source(OvenState.READY).target(OvenState.PREPAIRE).event(OvenEvent.CONFIGURED)
                 .and().withChoice().source(OvenState.PREPAIRE)
@@ -97,17 +97,20 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
 
     @Bean(name = "roomTemperatureSensor")
     public RoomTemperatureSensor getRoomTemperatureSensor() {
-        return new RoomTemperatureSensor();
+        RoomTemperatureSensor sensor = new RoomTemperatureSensor();
+        return sensor;
     }
 
     @Bean(name = "objectTemperatureSensor")
     public ObjectTemperatureSensor getObjectTemperatureSensor() {
-        return new ObjectTemperatureSensor();
+        ObjectTemperatureSensor sensor = new ObjectTemperatureSensor();
+        return sensor;
     }
 
     @Bean(name = "ovenPlug")
     public OvenPlug getOvenPlug() {
-        return new OvenPlug();
+        OvenPlug plug = new OvenPlug();
+        return plug;
     }
 
     @Bean(name = "hasTimeGuard")
@@ -122,7 +125,8 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
 
     @Bean(name = "smokerPlug")
     public SmokerPlug getSmokerPlug() {
-        return new SmokerPlug();
+        SmokerPlug plug = new SmokerPlug();
+        return plug;
     }
 
     @Bean(name = "TFConnection")

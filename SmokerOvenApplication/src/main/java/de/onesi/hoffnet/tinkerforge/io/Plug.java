@@ -19,7 +19,7 @@ import org.springframework.statemachine.transition.Transition;
 
 public class Plug implements IComponent, StateMachineListener<OvenState, OvenEvent> {
 
-    protected Logger logger;
+    protected Logger log;
     protected String uuid;
     protected short relayno;
     @Autowired
@@ -28,47 +28,40 @@ public class Plug implements IComponent, StateMachineListener<OvenState, OvenEve
     private boolean state = false;
 
     public Plug() {
-        logger = LoggerFactory.getLogger(this.getClass());
+        log = LoggerFactory.getLogger(this.getClass());
     }
 
     @Override
     public void initialize() throws Exception {
-        logger.info("UUID:"+uuid+", Connection:"+connection);
         relay = new BrickletDualRelay(uuid, connection);
+        log.info("using " + uuid);
         connection.getOvenStateMachine().addStateListener(this);
+        turnOff();
 
     }
 
     public void turnOn() throws TimeoutException, NotConnectedException {
         state = true;
         sendState();
-        logger.info("turned On");
+        log.info("turned On");
     }
 
     public void turnOff() throws TimeoutException, NotConnectedException {
         state = false;
-
-        logger.info("turned Off");
+        sendState();
+        log.info("turned Off");
     }
 
     public void sendState() throws TimeoutException, NotConnectedException {
-        BrickletDualRelay.State state = relay.getState();
-        switch (relayno) {
-            case 1:
-                relay.setState(this.state, state.relay2);
-                break;
-            case 2:
-                relay.setState(state.relay1, this.state);
-                break;
-        }
+        relay.setSelectedState(relayno, state);
     }
 
     public boolean getState() {
         return state;
     }
 
-    public void setLogger(Logger logger) {
-        this.logger = logger;
+    public void setLog(Logger log) {
+        this.log = log;
     }
 
     @Override

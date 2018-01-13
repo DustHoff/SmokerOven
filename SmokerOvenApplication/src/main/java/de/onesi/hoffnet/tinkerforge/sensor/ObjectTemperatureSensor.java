@@ -18,7 +18,7 @@ public class ObjectTemperatureSensor extends TemperatureSensor  {
         if(getTargetTemperature()==null)return;
         if((this.getTemperature()+tolerance)>=getTargetTemperature()){
             log.info("Object Temperature reached");
-            ovenStateMachine.sendEvent(OvenEvent.TEMPERATURE_REACHED);
+            connection.getOvenStateMachine().sendEvent(OvenEvent.TEMPERATURE_REACHED);
         }
     }
 }
