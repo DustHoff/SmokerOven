@@ -2,7 +2,6 @@ package de.onesi.hoffnet.test;
 
 import de.onesi.hoffnet.SmokerOven;
 import de.onesi.hoffnet.events.OvenEvent;
-import de.onesi.hoffnet.states.ConnectionState;
 import de.onesi.hoffnet.states.OvenState;
 import de.onesi.hoffnet.tinkerforge.TFConnection;
 import de.onesi.hoffnet.tinkerforge.io.OvenPlug;
@@ -66,7 +65,7 @@ public class TFMock {
     }
 
     private void mockConnection() throws Exception {
-        given(connection.getConnectionState()).willReturn(ConnectionState.CONNECTED.getId());
+        //given(connection.getConnectionState()).willReturn(ConnectionState.CONNECTED.getId());
         doNothing().when(connection).connect();
         doCallRealMethod().when(connection).getState();
         doCallRealMethod().when(connection).connected(Matchers.anyShort());

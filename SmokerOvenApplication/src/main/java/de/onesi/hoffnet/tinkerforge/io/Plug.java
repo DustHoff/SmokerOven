@@ -34,10 +34,17 @@ public class Plug implements IComponent, StateMachineListener<OvenState, OvenEve
     @Override
     public void initialize() throws Exception {
         relay = new BrickletDualRelay(uuid, connection);
-        log.info("using " + uuid);
-        connection.getOvenStateMachine().addStateListener(this);
+        this.connection.getOvenStateMachine().addStateListener(this);
         turnOff();
+    }
 
+    @Override
+    public short identfier() {
+        return BrickletDualRelay.DEVICE_IDENTIFIER;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public void turnOn() throws TimeoutException, NotConnectedException {

@@ -58,6 +58,8 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
                 .and()
                 .withExternal().source(OvenState.INITIALIZE).target(OvenState.FAILED).event(OvenEvent.FAILED)
                 .and()
+                .withExternal().source(OvenState.READY).target(OvenState.FAILED).event(OvenEvent.FAILED)
+                .and()
                 .withExternal().source(OvenState.FAILED).target(OvenState.INITIALIZE).timerOnce(30000)
                 .and()
                 .withExternal().source(OvenState.READY).target(OvenState.PREPAIRE).event(OvenEvent.CONFIGURED)

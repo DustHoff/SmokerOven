@@ -18,7 +18,7 @@ import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TFConnection extends IPConnection implements IPConnection.ConnectedListener, IPConnection.DisconnectedListener, ApplicationContextAware, Action<OvenState, OvenEvent> {
+public class TFConnection extends IPConnection implements IPConnection.ConnectedListener, IPConnection.DisconnectedListener, ApplicationContextAware, Action<OvenState, OvenEvent>, IPConnection.EnumerateListener {
 
     private Logger log;
     @Value("${tf.connection.host:127.0.0.1}")
@@ -35,6 +35,7 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
         this.setTimeout(timeout);
         this.addConnectedListener(this);
         this.addDisconnectedListener(this);
+        this.addEnumerateListener(this);
         log = LoggerFactory.getLogger(TFConnection.class);
     }
 
@@ -79,12 +80,7 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
     public void execute(StateContext<OvenState, OvenEvent> context) {
         try {
             connect();
-            waitForConnection();
-            for (IComponent component : this.context.getBeansOfType(IComponent.class).values()) {
-                log.info("Initialize " + component.getClass().getSimpleName());
-                //Thread.sleep(timeout);
-                component.initialize();
-            }
+            enumerate();
             getOvenStateMachine().sendEvent(OvenEvent.INITIALIZED);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -101,5 +97,23 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
         while (!getState().equals(ConnectionState.CONNECTED)) {
             Thread.sleep(500);
         }
+    }
+
+    @Override
+    public void enumerate(String uid, String connectedUid, char position, short[] hardwareVersion, short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
+        if (enumerationType == IPConnection.ENUMERATION_TYPE_DISCONNECTED) return;
+
+        for (IComponent component : this.context.getBeansOfType(IComponent.class).values()) {
+            if (deviceIdentifier == component.identfier() && uid.equals(component.getUuid())) {
+                try {
+                    log.info("Initialize " + component.getClass().getSimpleName() + " with UID " + uid + " on slot " + position + " Firmware " + firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2] + "v");
+                    component.initialize();
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    getOvenStateMachine().sendEvent(OvenEvent.FAILED);
+                }
+            }
+        }
+
     }
 }

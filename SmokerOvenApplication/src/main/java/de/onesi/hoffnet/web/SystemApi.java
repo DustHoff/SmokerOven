@@ -45,10 +45,12 @@ public class SystemApi {
         objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
         roomTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
         objectTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
-        ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
         configuration.setRoomTemperature(roomTemperatureSensor.getTargetTemperature());
         configuration.setObjectTemperature(objectTemperatureSensor.getTargetTemperature());
+        if (configuration.getStartDate() != null)
+            ovenStateMachine.getExtendedState().getVariables().put("start", configuration.getStartDate());
         this.configuration = configuration;
+        ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
         return getConfiguration();
     }
 

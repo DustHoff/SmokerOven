@@ -1,4 +1,6 @@
 tf:
+  connection:
+    timeout: 30000
   sensor:
     temperature:
       max: 150.0

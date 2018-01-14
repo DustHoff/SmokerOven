@@ -26,10 +26,18 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
     @Override
     public void initialize() throws Exception {
         sensor = new BrickletThermocouple(uuid, connection);
-        log.info("using " + uuid);
         sensor.addTemperatureListener(this);
         sensor.setResponseExpected(BrickletThermocouple.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, false);
         sensor.setTemperatureCallbackPeriod(1000);
+    }
+
+    @Override
+    public short identfier() {
+        return BrickletThermocouple.DEVICE_IDENTIFIER;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public double getTemperature() {
