@@ -42,11 +42,13 @@ public class SystemApi {
     @PostMapping(value = "/configure", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Configuration configure(@RequestBody Configuration configuration) {
         roomTemperatureSensor.setTargetTemperature(configuration.getRoomTemperature());
-        objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
+        if (configuration.getObjectTemperature() != null) {
+            objectTemperatureSensor.setTargetTemperature(configuration.getObjectTemperature());
+            configuration.setObjectTemperature(objectTemperatureSensor.getTargetTemperature());
+        }
         roomTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
         objectTemperatureSensor.setTolerance(configuration.getTemperatureTolerance());
         configuration.setRoomTemperature(roomTemperatureSensor.getTargetTemperature());
-        configuration.setObjectTemperature(objectTemperatureSensor.getTargetTemperature());
         if (configuration.getStartDate() != null)
             ovenStateMachine.getExtendedState().getVariables().put("start", configuration.getStartDate());
         this.configuration = configuration;
