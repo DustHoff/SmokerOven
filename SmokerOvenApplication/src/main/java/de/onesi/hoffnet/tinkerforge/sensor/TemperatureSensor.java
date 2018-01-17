@@ -48,7 +48,7 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
     public void temperature(int temperature) {
         this.temperature = temperature / 100.d;
         connection.getOvenStateMachine().sendEvent(OvenEvent.TEMPERATURE_CHANGED);
-        log.debug("Changed Temperature to " + this.temperature);
+        log.info("Changed Temperature to " + this.temperature);
     }
 
 

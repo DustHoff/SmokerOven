@@ -20,9 +20,9 @@ public class RoomTemperatureSensor extends TemperatureSensor implements Guard<Ov
         if(getTargetTemperature()==null) return false;
         switch (stateContext.getTarget().getId()){
             case COOLING:
-                return ((getTemperature()-tolerance)>getTargetTemperature());
+                return ((getTemperature() + tolerance) > getTargetTemperature());
             case HEATING:
-                return ((getTemperature()+tolerance)<getTargetTemperature());
+                return ((getTemperature() - tolerance) < getTargetTemperature());
         }
         return false;
     }
