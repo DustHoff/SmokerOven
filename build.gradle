@@ -1,0 +1,25 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.9.RELEASE' apply false
+}
+
+allprojects {
+    apply plugin: 'maven'
+
+    group = 'de.onesi.hoffnet'
+    version = '1.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+}

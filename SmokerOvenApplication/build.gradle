@@ -1,0 +1,15 @@
+apply plugin: 'org.springframework.boot'
+
+description = ''
+
+dependencies {
+    implementation project(':API')
+    implementation "com.tinkerforge:tinkerforge:2.1.16"
+
+    implementation "org.springframework.statemachine:spring-statemachine-core:1.2.7.RELEASE"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "com.google.code.gson:gson:2.8.2"
+  
+    testImplementation "org.springframework.statemachine:spring-statemachine-test:1.2.7.RELEASE"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
