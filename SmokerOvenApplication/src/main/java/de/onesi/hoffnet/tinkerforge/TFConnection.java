@@ -4,11 +4,14 @@ import com.tinkerforge.AlreadyConnectedException;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.NetworkException;
 import de.onesi.hoffnet.events.OvenEvent;
+import de.onesi.hoffnet.listener.EventListener;
 import de.onesi.hoffnet.states.ConnectionState;
 import de.onesi.hoffnet.states.OvenState;
+import de.onesi.hoffnet.web.data.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -28,6 +31,8 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
     @Value("${tf.connection.timeout:2500}")
     private int timeout;
     private ApplicationContext context;
+    @Autowired
+    private EventListener eventListener;
 
     public TFConnection() {
         super();
@@ -79,12 +84,12 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
     @Override
     public void execute(StateContext<OvenState, OvenEvent> context) {
         try {
+            getOvenStateMachine().addStateListener(eventListener);
             connect();
             enumerate();
             getOvenStateMachine().sendEvent(OvenEvent.INITIALIZED);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            getOvenStateMachine().sendEvent(OvenEvent.FAILED);
+            handleException(e);
         }
     }
 
@@ -93,10 +98,8 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
         return timeout;
     }
 
-    public void waitForConnection() throws InterruptedException {
-        while (!getState().equals(ConnectionState.CONNECTED)) {
-            Thread.sleep(500);
-        }
+    public void setEventListener(EventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     @Override
@@ -109,11 +112,18 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
                     log.info("Initialize " + component.getClass().getSimpleName() + " with UID " + uid + " on slot " + position + " Firmware " + firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2] + "v");
                     component.initialize();
                 } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                    getOvenStateMachine().sendEvent(OvenEvent.FAILED);
+                    handleException(e);
                 }
             }
         }
 
+    }
+
+    private void handleException(Exception e) {
+        log.error(e.getMessage(), e);
+        State event = new State(OvenState.FAILED);
+        event.setMessage(e.getMessage());
+        eventListener.addEvent(event);
+        getOvenStateMachine().sendEvent(OvenEvent.FAILED);
     }
 }
