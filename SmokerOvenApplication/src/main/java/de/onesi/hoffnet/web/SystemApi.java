@@ -2,18 +2,23 @@ package de.onesi.hoffnet.web;
 
 import com.google.gson.Gson;
 import de.onesi.hoffnet.events.OvenEvent;
+import de.onesi.hoffnet.listener.EventListener;
 import de.onesi.hoffnet.states.OvenState;
 import de.onesi.hoffnet.tinkerforge.TFConnection;
 import de.onesi.hoffnet.tinkerforge.sensor.ObjectTemperatureSensor;
 import de.onesi.hoffnet.tinkerforge.sensor.RoomTemperatureSensor;
 import de.onesi.hoffnet.web.data.Configuration;
+import de.onesi.hoffnet.web.data.State;
 import de.onesi.hoffnet.web.data.Temperature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.statemachine.StateMachine;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SystemApi {
@@ -28,15 +33,12 @@ public class SystemApi {
     private TFConnection connection;
     @Autowired
     private StateMachine<OvenState, OvenEvent> ovenStateMachine;
+    @Autowired
+    private EventListener eventListener;
     private Configuration configuration = new Configuration();
 
     public SystemApi() {
         gson = new Gson();
-    }
-
-    @RequestMapping(value = "/state", produces = MediaType.APPLICATION_JSON_VALUE)
-    public OvenState state() {
-        return ovenStateMachine.getState().getId();
     }
 
     @PostMapping(value = "/configure", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,5 +69,18 @@ public class SystemApi {
         temperature.setObjectTemperature(objectTemperatureSensor.getTemperature());
         temperature.setRoomTemperature(roomTemperatureSensor.getTemperature());
         return temperature;
+    }
+
+    @GetMapping(value = "/state")
+    public State getEvent() {
+        State state = eventListener.getNextEvent();
+        if (state == null) state = new State(ovenStateMachine.getState().getId());
+        return state;
+    }
+
+    @PostMapping(value = "/state")
+    public void sendEvent(OvenEvent event) {
+        log.info("Sending State " + event.name());
+        ovenStateMachine.sendEvent(event);
     }
 }
