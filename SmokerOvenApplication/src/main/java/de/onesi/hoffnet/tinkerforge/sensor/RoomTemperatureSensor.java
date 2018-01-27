@@ -2,6 +2,7 @@ package de.onesi.hoffnet.tinkerforge.sensor;
 
 import de.onesi.hoffnet.events.OvenEvent;
 import de.onesi.hoffnet.states.OvenState;
+import de.onesi.hoffnet.tinkerforge.TFConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.guard.Guard;
@@ -13,6 +14,10 @@ public class RoomTemperatureSensor extends TemperatureSensor implements Guard<Ov
     @Value("${tf.sensor.temperature.room:uuid}")
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public RoomTemperatureSensor(TFConnection connection) {
+        super(connection);
     }
 
     @Override

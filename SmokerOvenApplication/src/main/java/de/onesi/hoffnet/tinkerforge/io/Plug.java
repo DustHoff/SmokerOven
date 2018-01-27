@@ -19,15 +19,16 @@ import org.springframework.statemachine.transition.Transition;
 
 public class Plug implements IComponent, StateMachineListener<OvenState, OvenEvent> {
 
-    protected Logger log;
+    protected final Logger log;
     protected String uuid;
     protected short relayno;
-    @Autowired
     private TFConnection connection;
     private BrickletDualRelay relay;
     private boolean state = false;
 
-    public Plug() {
+    @Autowired
+    public Plug(TFConnection connection) {
+        this.connection = connection;
         log = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -65,10 +66,6 @@ public class Plug implements IComponent, StateMachineListener<OvenState, OvenEve
 
     public boolean getState() {
         return state;
-    }
-
-    public void setLog(Logger log) {
-        this.log = log;
     }
 
     @Override

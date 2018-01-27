@@ -1,6 +1,7 @@
 package de.onesi.hoffnet.tinkerforge.sensor;
 
 import de.onesi.hoffnet.events.OvenEvent;
+import de.onesi.hoffnet.tinkerforge.TFConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,10 @@ public class ObjectTemperatureSensor extends TemperatureSensor  {
     @Value("${tf.sensor.temperature.object:uuid}")
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public ObjectTemperatureSensor(TFConnection connection) {
+        super(connection);
     }
 
     @Override
