@@ -96,43 +96,4 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
                 .and()
                 .withExternal().source(OvenState.FINISHED).target(OvenState.READY);
     }
-/*
-    @Bean(name = "roomTemperatureSensor")
-    public RoomTemperatureSensor getRoomTemperatureSensor() {
-        RoomTemperatureSensor sensor = new RoomTemperatureSensor(getConnection());
-        return sensor;
-    }
-
-    @Bean(name = "objectTemperatureSensor")
-    public ObjectTemperatureSensor getObjectTemperatureSensor() {
-        ObjectTemperatureSensor sensor = new ObjectTemperatureSensor(getConnection());
-        return sensor;
-    }
-
-    @Bean(name = "ovenPlug")
-    public OvenPlug getOvenPlug() {
-        OvenPlug plug = new OvenPlug(getConnection());
-        return plug;
-    }
-
-    @Bean(name = "hasTimeGuard")
-    public HasTimeGuard getHasTimeGuard() {
-        return new HasTimeGuard();
-    }
-
-    @Bean(name = "timeExpiredGuard")
-    public TimeExpiredGuard getTimeExpiredGuard() {
-        return new TimeExpiredGuard();
-    }
-
-    @Bean(name = "smokerPlug")
-    public SmokerPlug getSmokerPlug() {
-        SmokerPlug plug = new SmokerPlug(getConnection());
-        return plug;
-    }
-
-    @Bean(name = "TFConnection")
-    public TFConnection getConnection() {
-        return new TFConnection(new EventListener());
-    }*/
 }
