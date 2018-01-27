@@ -2,6 +2,7 @@ package de.onesi.hoffnet.tinkerforge.io;
 
 import de.onesi.hoffnet.events.OvenEvent;
 import de.onesi.hoffnet.states.OvenState;
+import de.onesi.hoffnet.tinkerforge.TFConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.state.State;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,8 @@ public class OvenPlug extends Plug {
         this.relayno = relayno;
     }
 
-    public OvenPlug() {
-        super();
+    public OvenPlug(TFConnection connection) {
+        super(connection);
     }
 
     @Override

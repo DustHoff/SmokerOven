@@ -5,13 +5,9 @@ import de.onesi.hoffnet.guard.HasTimeGuard;
 import de.onesi.hoffnet.guard.TimeExpiredGuard;
 import de.onesi.hoffnet.states.OvenState;
 import de.onesi.hoffnet.tinkerforge.TFConnection;
-import de.onesi.hoffnet.tinkerforge.io.OvenPlug;
-import de.onesi.hoffnet.tinkerforge.io.SmokerPlug;
-import de.onesi.hoffnet.tinkerforge.sensor.ObjectTemperatureSensor;
 import de.onesi.hoffnet.tinkerforge.sensor.RoomTemperatureSensor;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
@@ -20,8 +16,12 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 
 @Configuration
 @EnableStateMachine(name = "ovenStateMachine")
-@Import({RoomTemperatureSensor.class, ObjectTemperatureSensor.class})
 public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenState, OvenEvent> {
+
+    @Autowired
+    private TFConnection connection;
+    @Autowired
+    private RoomTemperatureSensor roomTemperatureSensor;
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<OvenState, OvenEvent> config) throws Exception {
@@ -32,7 +32,7 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
     public void configure(StateMachineStateConfigurer<OvenState, OvenEvent> states) throws Exception {
         states.withStates()
                 .initial(OvenState.INITIALIZE)
-                .state(OvenState.INITIALIZE, getConnection())
+                .state(OvenState.INITIALIZE, connection)
                 .state(OvenState.READY)
                 .state(OvenState.FAILED)
                 .choice(OvenState.PREPAIRE)
@@ -64,13 +64,13 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
                 .and()
                 .withExternal().source(OvenState.READY).target(OvenState.PREPAIRE).event(OvenEvent.CONFIGURED)
                 .and().withChoice().source(OvenState.PREPAIRE)
-                .first(OvenState.PREPAIRE_WAIT, getHasTimeGuard())
+                .first(OvenState.PREPAIRE_WAIT, new HasTimeGuard())
                 .last(OvenState.PREPAIRE_NOTHING)
                 .and()
                 .withExternal().source(OvenState.PREPAIRE_NOTHING).target(OvenState.START)
                 .and()
                 .withExternal()
-                .source(OvenState.PREPAIRE_WAIT).target(OvenState.START).timer(60000).guard(getTimeExpiredGuard())
+                .source(OvenState.PREPAIRE_WAIT).target(OvenState.START).timer(60000).guard(new TimeExpiredGuard())
                 .and()
                 .withFork().source(OvenState.START)
                 .target(OvenState.SMOKE)
@@ -80,11 +80,11 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
                 .and()
                 // Oven activity
                 .withExternal().source(OvenState.COOLING)
-                .guard(getRoomTemperatureSensor())
+                .guard(roomTemperatureSensor)
                 .target(OvenState.HEATING).event(OvenEvent.TEMPERATURE_CHANGED)
                 .and()
                 .withExternal().source(OvenState.HEATING)
-                .guard(getRoomTemperatureSensor())
+                .guard(roomTemperatureSensor)
                 .target(OvenState.COOLING).event(OvenEvent.TEMPERATURE_CHANGED)
                 .and()
                 // Smoker activity
@@ -96,22 +96,22 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
                 .and()
                 .withExternal().source(OvenState.FINISHED).target(OvenState.READY);
     }
-
+/*
     @Bean(name = "roomTemperatureSensor")
     public RoomTemperatureSensor getRoomTemperatureSensor() {
-        RoomTemperatureSensor sensor = new RoomTemperatureSensor();
+        RoomTemperatureSensor sensor = new RoomTemperatureSensor(getConnection());
         return sensor;
     }
 
     @Bean(name = "objectTemperatureSensor")
     public ObjectTemperatureSensor getObjectTemperatureSensor() {
-        ObjectTemperatureSensor sensor = new ObjectTemperatureSensor();
+        ObjectTemperatureSensor sensor = new ObjectTemperatureSensor(getConnection());
         return sensor;
     }
 
     @Bean(name = "ovenPlug")
     public OvenPlug getOvenPlug() {
-        OvenPlug plug = new OvenPlug();
+        OvenPlug plug = new OvenPlug(getConnection());
         return plug;
     }
 
@@ -127,12 +127,12 @@ public class OvenConfiguration extends EnumStateMachineConfigurerAdapter<OvenSta
 
     @Bean(name = "smokerPlug")
     public SmokerPlug getSmokerPlug() {
-        SmokerPlug plug = new SmokerPlug();
+        SmokerPlug plug = new SmokerPlug(getConnection());
         return plug;
     }
 
     @Bean(name = "TFConnection")
     public TFConnection getConnection() {
-        return new TFConnection();
-    }
+        return new TFConnection(new EventListener());
+    }*/
 }

@@ -31,11 +31,12 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
     @Value("${tf.connection.timeout:2500}")
     private int timeout;
     private ApplicationContext context;
+    private final EventListener eventListener;
     @Autowired
-    private EventListener eventListener;
-
-    public TFConnection() {
+    public TFConnection(EventListener eventListener) {
         super();
+        this.eventListener = eventListener;
+        this.context = context;
         this.setAutoReconnect(true);
         this.setTimeout(timeout);
         this.addConnectedListener(this);
@@ -96,10 +97,6 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
     @Override
     public int getTimeout() {
         return timeout;
-    }
-
-    public void setEventListener(EventListener eventListener) {
-        this.eventListener = eventListener;
     }
 
     @Override
