@@ -2,15 +2,18 @@ package de.onesi.hoffnet.test;
 
 import de.onesi.hoffnet.events.OvenEvent;
 import de.onesi.hoffnet.states.OvenState;
+import de.onesi.hoffnet.tinkerforge.sensor.ObjectTemperatureSensor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-public class ObjectTemperatureTest extends TFMock {
+public class ObjectTemperatureTest extends BasicTest {
+
+    @Autowired
+    private ObjectTemperatureSensor objectTemperatureSensor;
 
     @Override
     public void before() throws Exception {

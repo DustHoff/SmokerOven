@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 
 public class TemperatureSensor implements IComponent, BrickletThermocouple.TemperatureListener {
-    protected final Logger log;
+    protected Logger log;
     protected String uuid;
-    protected final TFConnection connection;
+    @Autowired
+    protected TFConnection connection;
     private BrickletThermocouple sensor;
     private double temperature = 0d;
     private Double targetTemperature;
@@ -22,9 +23,7 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
     @Value("${tf.sensor.temperature.max}")
     protected double maxTemperature;
 
-    @Autowired
-    public TemperatureSensor(TFConnection connection) {
-        this.connection = connection;
+    public TemperatureSensor() {
         log = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -34,6 +33,10 @@ public class TemperatureSensor implements IComponent, BrickletThermocouple.Tempe
         sensor.addTemperatureListener(this);
         sensor.setResponseExpected(BrickletThermocouple.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, false);
         sensor.setTemperatureCallbackPeriod(1000);
+    }
+
+    public void setLog(Logger log) {
+        this.log = log;
     }
 
     @Override
