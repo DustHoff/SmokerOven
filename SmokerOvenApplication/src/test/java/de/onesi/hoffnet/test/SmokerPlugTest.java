@@ -2,27 +2,33 @@ package de.onesi.hoffnet.test;
 
 import de.onesi.hoffnet.events.OvenEvent;
 import de.onesi.hoffnet.states.OvenState;
+import de.onesi.hoffnet.tinkerforge.io.SmokerPlug;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-public class SmokerPlugTest extends TFMock {
+public class SmokerPlugTest extends BasicTest {
+
+    @Autowired
+    private SmokerPlug smokerPlug;
+
+    @Override
+    public void before() throws Exception {
+        super.before();
+        smokerPlug.turnOff();
+    }
 
     @Test
-    public void startSmoker() {
-        Assert.assertEquals(OvenState.READY, ovenStateMachine.getState().getId());
-        Assert.assertFalse("SmokerPlug initial turn Off", smokerPlug.getState());
-        ovenStateMachine.sendEvent(OvenEvent.CONFIGURED);
-        Assert.assertEquals(OvenState.BUSY, ovenStateMachine.getState().getId());
+    public void startSmoker() throws Exception {
+        sendEvent(OvenEvent.CONFIGURED, OvenState.BUSY);
         Assert.assertTrue("SmokerPlug turn On", smokerPlug.getState());
     }
 
     @Test
-    public void stopSmoker() {
+    public void stopSmoker() throws Exception {
         startSmoker();
         ovenStateMachine.sendEvent(OvenEvent.TEMPERATURE_REACHED);
         Assert.assertFalse("SmokerPlug turn Off", smokerPlug.getState());
