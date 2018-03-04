@@ -78,9 +78,13 @@ public class SystemApi {
         return state;
     }
 
-    @PostMapping(value = "/state")
-    public void sendEvent(OvenEvent event) {
-        log.info("Sending State " + event.name());
+    @PostMapping(value = "/state", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void sendEvent(@RequestBody OvenEvent event) {
+        log.info("Received State " + event.name());
         ovenStateMachine.sendEvent(event);
+    }
+
+    public void setLog(Logger log) {
+        this.log = log;
     }
 }
