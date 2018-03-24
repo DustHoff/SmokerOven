@@ -1,10 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <title>SmokerOven</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/docs.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 </head>
 <body>
+<div class="header">
 
+</div>
+<div class="content">
+    <div class="wrapper">
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="label_install">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#install" aria-expanded="true"
+                                aria-controls="install">
+                            How to install?
+                        </button>
+                    </h5>
+                </div>
+                <div id="install" class="collapse show" aria-labelledby="label_install" data-parent="#accordion">
+                    <div class="card-body">
+                        Run as root
+                        <pre class="code">curl https://dusthoff.github.io/SmokerOven/install.sh | bash</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="label_config">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#config" aria-expanded="true"
+                                aria-controls="config">
+                            How to configure?
+                        </button>
+                    </h5>
+                </div>
+                <div id="config" class="collapse" aria-labelledby="label_config" data-parent="#accordion">
+                    <div class="card-body">
+                            <pre class="code">
+tf:
+  connection:
+    timeout: 30000
+  sensor:
+    temperature:
+      max: 150.0
+      tolerance: 2.0
+      room: B5G
+      object: B6L
+  io:
+    plug:
+      smoker:
+        id: rzt
+        relay: 1
+      oven:
+        id: rzt
+        relay: 2
+                            </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="wrapper">(C) Dustin Hoffmann 2018</div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+</div>
 </body>
 </html>
