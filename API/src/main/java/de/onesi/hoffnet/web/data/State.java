@@ -1,8 +1,8 @@
 package de.onesi.hoffnet.web.data;
 
-import de.onesi.hoffnet.states.OvenState;
-
 import java.util.Date;
+
+import de.onesi.hoffnet.states.OvenState;
 
 public class State {
 
@@ -40,5 +40,14 @@ public class State {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "State{" +
+                "timestamp=" + timestamp +
+                ", ovenState=" + ovenState +
+                ", message='" + message + '\'' +
+                '}';
     }
 }
