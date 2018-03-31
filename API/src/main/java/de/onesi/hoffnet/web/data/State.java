@@ -4,42 +4,36 @@ import java.util.Date;
 
 import de.onesi.hoffnet.states.OvenState;
 
-public class State {
+public final class State {
 
     private Date timestamp;
     private OvenState ovenState;
     private String message;
 
-    public State() {
+    public State(OvenState ovenState) {
+        this(ovenState, new Date(), null);
     }
 
-    public State(OvenState ovenState) {
+    public State(OvenState ovenState, String message) {
+        this(ovenState, new Date(), message);
+    }
+
+    public State(OvenState ovenState, Date timestamp, String message) {
+        this.timestamp = new Date((timestamp.getTime()));
         this.ovenState = ovenState;
-        this.timestamp = new Date();
+        this.message = message;
     }
 
     public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public OvenState getOvenState() {
         return ovenState;
     }
 
-    public void setOvenState(OvenState ovenState) {
-        this.ovenState = ovenState;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     @Override

@@ -3,11 +3,7 @@ package de.onesi.hoffnet.tinkerforge;
 import com.tinkerforge.AlreadyConnectedException;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.NetworkException;
-import de.onesi.hoffnet.events.OvenEvent;
-import de.onesi.hoffnet.listener.EventListener;
-import de.onesi.hoffnet.states.ConnectionState;
-import de.onesi.hoffnet.states.OvenState;
-import de.onesi.hoffnet.web.data.State;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -19,6 +15,12 @@ import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Component;
+
+import de.onesi.hoffnet.events.OvenEvent;
+import de.onesi.hoffnet.listener.EventListener;
+import de.onesi.hoffnet.states.ConnectionState;
+import de.onesi.hoffnet.states.OvenState;
+import de.onesi.hoffnet.web.data.State;
 
 @Component
 public class TFConnection extends IPConnection implements IPConnection.ConnectedListener, IPConnection.DisconnectedListener, ApplicationContextAware, Action<OvenState, OvenEvent>, IPConnection.EnumerateListener {
@@ -118,8 +120,7 @@ public class TFConnection extends IPConnection implements IPConnection.Connected
 
     private void handleException(Exception e) {
         log.error(e.getMessage(), e);
-        State event = new State(OvenState.FAILED);
-        event.setMessage(e.getMessage());
+        State event = new State(OvenState.FAILED, e.getMessage());
         eventListener.addEvent(event);
         getOvenStateMachine().sendEvent(OvenEvent.FAILED);
     }
