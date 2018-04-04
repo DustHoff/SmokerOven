@@ -10,6 +10,10 @@ public final class State {
     private OvenState ovenState;
     private String message;
 
+    private State() {
+        // this is needed for Jackson to work
+    }
+
     public State(OvenState ovenState) {
         this(ovenState, new Date(), null);
     }
