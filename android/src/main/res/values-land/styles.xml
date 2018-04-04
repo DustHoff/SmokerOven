@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Main.ConfigTable" parent="">
+        <item name="layout_constraintHorizontal_bias">0.3</item>
+    </style>
+
+    <style name="Main.Button.Submit" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="layout_constraintBottom_toBottomOf">@+id/table</item>
+        <item name="layout_constraintStart_toEndOf">@+id/table</item>
+        <item name="layout_constraintTop_toTopOf">@+id/table</item>
+        <item name="layout_constraintVertical_bias">0.1</item>
+    </style>
+
+    <style name="Main.Button.Stop" parent="Widget.AppCompat.Button">
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="layout_constraintBottom_toBottomOf">@+id/table</item>
+        <item name="layout_constraintStart_toEndOf">@+id/table</item>
+        <item name="layout_constraintTop_toTopOf">@+id/table</item>
+        <item name="layout_constraintVertical_bias">0.9</item>
+    </style>
+
+</resources>

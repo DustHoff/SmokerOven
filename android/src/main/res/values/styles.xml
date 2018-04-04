@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Main.ConfigTable" parent="">
+    </style>
+
+    <style name="Main.Button.Submit" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="layout_constraintStart_toStartOf">@+id/table</item>
+        <item name="layout_constraintTop_toBottomOf">@+id/table</item>
+    </style>
+
+    <style name="Main.Button.Stop" parent="Widget.AppCompat.Button">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="layout_constraintEnd_toEndOf">@+id/table</item>
+        <item name="layout_constraintTop_toBottomOf">@+id/table</item>
+    </style>
+
+</resources>

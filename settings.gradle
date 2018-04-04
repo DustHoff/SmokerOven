@@ -2,3 +2,4 @@ rootProject.name = 'SmokerOven'
 
 include ':API'
 include ':SmokerOvenApplication'
+include ':android'

@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        mock.java.srcDirs += 'src/mock/kotlin'
+        real.java.srcDirs += 'src/real/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "de.onesi.hoffnet.smoker"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('debug-keystore.jks')
+        }
+    }
+
+    flavorDimensions "hardware"
+    productFlavors {
+        mock {
+            dimension "hardware"
+        }
+        real {
+            dimension "hardware"
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    implementation project(":API")
+
+    implementation "io.reactivex.rxjava2:rxjava:2.1.12"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "io.reactivex.rxjava2:rxkotlin:2.2.0"
+
+    implementation "com.android.support.constraint:constraint-layout:1.0.2"
+    implementation "com.android.support:appcompat-v7:27.0.2"
+    implementation "com.android.support:design:27.0.2"
+    implementation "com.squareup.retrofit2:retrofit:2.4.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
+    implementation "com.squareup.retrofit2:converter-jackson:2.4.0"
+
+    implementation "com.google.dagger:dagger-android:2.14.1"
+    kapt "com.google.dagger:dagger-compiler:2.14.1"
+    kapt "com.google.dagger:dagger-android-processor:2.14.1"
+
+    mockImplementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
+}
