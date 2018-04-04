@@ -1,6 +1,8 @@
+apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
-description = ''
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
     implementation project(':API')

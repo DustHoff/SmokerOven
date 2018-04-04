@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.9.RELEASE' apply false
+    id "org.springframework.boot" version "1.5.9.RELEASE" apply false
 }
 
 allprojects {
@@ -10,14 +10,6 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'java'
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
-
     repositories {
         mavenLocal()
         jcenter()
