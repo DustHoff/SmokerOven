@@ -36,92 +36,116 @@ public enum OvenState {
             return EnumSet.of(INITIALIZE);
         }
     },
-
+    /**
+     * parent State
+     */
     PREPAIRE {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.of(PREPAIRE_NOTHING, PREPAIRE_WAIT, START, FAILED);
+            return EnumSet.of(PREPAIRE_NOTHING, PREPAIRE_WAIT);
         }
     },
-
+    
+    /**
+     * Internal State
+     * Placebo State. Nothing have to prepaired
+     */
     PREPAIRE_NOTHING {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.of(PREPAIRE_WAIT, START, FAILED);
-        }
-    },
-
-    PREPAIRE_WAIT {
-        @Override
-        public EnumSet<OvenState> getNext() {
-            return EnumSet.of(PREPAIRE_NOTHING, START, FAILED);
-        }
-    },
-
-    START {
-        @Override
-        public EnumSet<OvenState> getNext() {
-            return EnumSet.of(BUSY, FAILED);
+            return EnumSet.of(START);
         }
     },
 
     /**
+     * Internal State
+     * Timebased Release
+     */
+    PREPAIRE_WAIT {
+        @Override
+        public EnumSet<OvenState> getNext() {
+            return EnumSet.of(START);
+        }
+    },
+
+    /**
+     * Fork State
+     * 2 working Threads
+     */
+    START {
+        @Override
+        public EnumSet<OvenState> getNext() {
+            return EnumSet.of(BUSY);
+        }
+    },
+
+    /**
+     * parent State for the worker threads
+     * 1 Thread starts with HEATING (BASED on Temperature)
+     * 1 Thread starts with SMOKE
      * Busy
      */
     BUSY {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.of(HEATING, COOLING, SMOKE, AIR, FINISHED, FAILED);
+            return EnumSet.of(HEATING, COOLING, SMOKE, AIR, FAIlED);
         }
     },
 
     /**
+     * Internal State
      * Busy heating
      */
     HEATING {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.of(BUSY, COOLING, SMOKE, AIR, FINISHED, FAILED);
+            return EnumSet.of(COOLING, FINISHED, FAILED);
         }
     },
 
     /**
+     * Internal State
      * Busy cooling
      */
     COOLING {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.of(BUSY, HEATING, SMOKE, AIR, FINISHED, FAILED);
+            return EnumSet.of(HEATING, FINISHED, FAILED);
         }
     },
 
     /**
+     * Internal State
      * Busy smoking
      */
     SMOKE {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.of(BUSY, HEATING, COOLING, AIR, FINISHED, FAILED);
+            return EnumSet.of(AIR, FINISHED, FAILED);
         }
     },
 
     /**
+     * Internal State
      * Busy
      */
     AIR {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.of(BUSY, HEATING, COOLING, SMOKE, FINISHED, FAILED);
+            return EnumSet.of(SMOKE, FINISHED, FAILED);
         }
     },
 
     /**
+     * Join State 
+     * 1 Thread Busy (HEATING,COOLING)
+     * 1 Thread Busy (SMOKE, AIR)
      * We're done.
      */
     FINISHED {
         @Override
         public EnumSet<OvenState> getNext() {
-            return EnumSet.noneOf(OvenState.class);
+            return EnumSet.of(READY);
         }
     };
 
