@@ -12,10 +12,10 @@ export PID=${HOME}/bin/.pid
 
 case $1 in
     start)
-        start-stop-deamon -b --start --startas /bin/java --name smokeroven --pidfile ${PID} -exec /bin/java -- -Xmx1G -Xms1G -Dspring.configuration.location=${HOME}/config -jar ${HOME}/SmokerOvenApplication.jar
+        start-stop-deamon -b --pidfile ${PID} --make-pidfile -d ${HOME} --start --startas /bin/java -- -Xmx1G -Xms1G -Dspring.configuration.location=${HOME}/config -jar ${HOME}/SmokerOvenApplication.jar
     ;;
     stop)
-        start-stop-deamon --stop --name smokeroven --pidfile ${PID} -exec /bin/java --retry=0/30/KILL/5
+        start-stop-deamon --stop --pidfile ${PID} --remove-pidfile --retry=TERM/30/KILL/5
     ;;
     restart)
         $0 stop
